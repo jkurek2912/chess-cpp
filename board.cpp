@@ -2,7 +2,6 @@
 #include <iostream>
 
 Board::Board() : sideToMove(WHITE) {
-    // Set up starting position
     squares = {{
         {WR, WN, WB, WQ, WK, WB, WN, WR},
         {WP, WP, WP, WP, WP, WP, WP, WP},
@@ -40,4 +39,43 @@ void Board::print() const {
         std::cout << "\n";
     }
     std::cout << "  a b c d e f g h\n";
+}
+
+std::vector<Move> Board::generatePawnMoves() {
+    std::vector<Move> moves;
+    int direction = (sideToMove == WHITE) ? -1 : 1;
+
+    for (int r = 0; r < NUM_ROWS; r++) {
+        for (int c = 0; c < NUM_COLS; c++) {
+            Piece p = squares[r][c];
+            if ((sideToMove == WHITE && p == WP) || (sideToMove == BLACK && p == BP)) {
+                int nextRow = r + direction;
+
+                if (nextRow >= 0 && nextRow < NUM_ROWS && squares[nextRow][c] == EMPTY) {
+                    moves.emplace_back(squareIndex(r, c), squareIndex(nextRow, c));
+                    
+                    // two steps (only on starting rank)
+                    bool isStartRank = (sideToMove == WHITE && r == 6) || (sideToMove == BLACK && r == 1);
+                    int twoStepRow = r + 2 * direction;
+                    if (isStartRank && squares[twoStepRow][c] == EMPTY) {
+                        moves.emplace_back(squareIndex(r, c), squareIndex(twoStepRow, c));
+                    }
+                }
+
+                // captures
+                for (int dc : {-1, 1}) {
+                    int captureCol = c + dc;
+                    if (captureCol >= 0 && captureCol < NUM_COLS && nextRow >= 0 && nextRow < NUM_ROWS) {
+                        Piece target = squares[nextRow][captureCol];
+                        if (target != EMPTY && ((sideToMove == WHITE && isBlack(target)) || (sideToMove == BLACK && isWhite(target)))) {
+                            moves.emplace_back(squareIndex(r, c), squareIndex(nextRow, captureCol));
+                        }
+                    }
+                }
+
+                // TODO: add promotion and en passant
+            }
+        }
+    }
+    return moves;
 }
