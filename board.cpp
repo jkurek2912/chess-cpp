@@ -244,19 +244,28 @@ std::vector<Move> Board::generateQueenMoves()
         {1, 1}    // down-right
     };
 
-    for (int r = 0; r < NUM_ROWS; r++) {
-        for (int c = 0; c < NUM_COLS; c++) {
+    for (int r = 0; r < NUM_ROWS; r++)
+    {
+        for (int c = 0; c < NUM_COLS; c++)
+        {
             Piece p = squares[r][c];
-            if ((sideToMove == WHITE && p == WQ) || (sideToMove == BLACK && p == BQ)) {
-                for (auto [dr, dc] : directions) {
+            if ((sideToMove == WHITE && p == WQ) || (sideToMove == BLACK && p == BQ))
+            {
+                for (auto [dr, dc] : directions)
+                {
                     int newRow = r + dr;
                     int newCol = c + dc;
-                    while (inBounds(newRow, newCol)) {
+                    while (inBounds(newRow, newCol))
+                    {
                         Piece target = squares[newRow][newCol];
-                        if (target == EMPTY) {
+                        if (target == EMPTY)
+                        {
                             moves.emplace_back(squareIndex(r, c), squareIndex(newRow, newCol));
-                        } else {
-                            if ((sideToMove == WHITE && isBlack(target)) || (sideToMove == BLACK && isWhite(target))) {
+                        }
+                        else
+                        {
+                            if ((sideToMove == WHITE && isBlack(target)) || (sideToMove == BLACK && isWhite(target)))
+                            {
                                 moves.emplace_back(squareIndex(r, c), squareIndex(newRow, newCol));
                             }
                             break;
@@ -268,6 +277,41 @@ std::vector<Move> Board::generateQueenMoves()
             }
         }
     }
+    return moves;
+}
+
+std::vector<Move> Board::generateKingMoves()
+{
+    std::vector<Move> moves;
+    const std::vector<std::pair<int, int>> directions = {
+        {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+
+    for (int r = 0; r < NUM_ROWS; ++r)
+    {
+        for (int c = 0; c < NUM_COLS; ++c)
+        {
+            Piece p = squares[r][c];
+            if ((sideToMove == WHITE && p == WK) || (sideToMove == BLACK && p == BK))
+            {
+                for (auto [dr, dc] : directions)
+                {
+                    int nr = r + dr;
+                    int nc = c + dc;
+                    if (inBounds(nr, nc))
+                    {
+                        Piece target = squares[nr][nc];
+                        if (target == EMPTY ||
+                            (sideToMove == WHITE && isBlack(target)) ||
+                            (sideToMove == BLACK && isWhite(target)))
+                        {
+                            moves.emplace_back(squareIndex(r, c), squareIndex(nr, nc));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     return moves;
 }
 
