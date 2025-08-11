@@ -34,6 +34,18 @@ public:
     }
 
     std::vector<Move> generatePawnMoves();
+
+    std::vector<Move> generateKnightMoves();
+
+    std::vector<Move> generateBishopMoves();
+
+    std::vector<Move> generateRookMoves();
+
+    std::vector<Move> generateQueenMoves();
+
+    std::vector<Move> generateKingMoves();
+
+    void applyMove(const Move &move);
 };
 
 #endif
