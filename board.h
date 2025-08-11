@@ -33,6 +33,16 @@ public:
         return index % 8;
     }
 
+    inline bool pieceFoundAndTurnToMove(Color sideToMove, Piece p)
+    {
+        return (sideToMove == WHITE && isWhite(p)) || (sideToMove == BLACK && isBlack(p));
+    }
+
+    bool inBounds(int row, int col)
+    {
+        return row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS;
+    }
+
     std::vector<Move> generatePawnMoves();
 
     std::vector<Move> generateKnightMoves();

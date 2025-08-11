@@ -84,7 +84,7 @@ std::vector<Move> Board::generatePawnMoves()
             {
                 int newRow = r + direction;
 
-                if (newRow >= 0 && newRow < NUM_ROWS && squares[newRow][c] == EMPTY)
+                if (inBounds(newRow, c) && squares[newRow][c] == EMPTY)
                 {
                     moves.emplace_back(squareIndex(r, c), squareIndex(newRow, c));
 
@@ -101,7 +101,7 @@ std::vector<Move> Board::generatePawnMoves()
                 for (int dc : {-1, 1})
                 {
                     int captureCol = c + dc;
-                    if (captureCol >= 0 && captureCol < NUM_COLS && newRow >= 0 && newRow < NUM_ROWS)
+                    if (inBounds(newRow, captureCol))
                     {
                         Piece target = squares[newRow][captureCol];
                         if (target != EMPTY && ((sideToMove == WHITE && isBlack(target)) || (sideToMove == BLACK && isWhite(target))))
@@ -134,7 +134,7 @@ std::vector<Move> Board::generateKnightMoves()
                 {
                     int newRow = r + nr;
                     int newCol = c + nc;
-                    if (newRow >= 0 && newRow < NUM_ROWS && newCol >= 0 && newCol < NUM_COLS)
+                    if (inBounds(newRow, newCol))
                     {
                         Piece target = squares[newRow][newCol];
                         if (target == EMPTY || (sideToMove == WHITE && isBlack(target) || (sideToMove == BLACK && isWhite(target))))
@@ -164,7 +164,7 @@ std::vector<Move> Board::generateBishopMoves()
                 {
                     int newRow = r + dr;
                     int newCol = c + dc;
-                    while (newRow >= 0 && newRow < NUM_ROWS && newCol >= 0 && newCol < NUM_COLS)
+                    while (inBounds(newRow, newCol))
                     {
                         Piece target = squares[newRow][newCol];
                         if (target == EMPTY)
@@ -175,6 +175,43 @@ std::vector<Move> Board::generateBishopMoves()
                         {
                             if ((sideToMove == WHITE && isBlack(target)) || (sideToMove == BLACK && isWhite(target)))
                             {
+                                moves.emplace_back(squareIndex(r, c), squareIndex(newRow, newCol));
+                            }
+                            break;
+                        }
+                        newRow += dr;
+                        newCol += dc;
+                    }
+                }
+            }
+        }
+    }
+    return moves;
+}
+
+std::vector<Move> Board::generateRookMoves()
+{
+    std::vector<Move> moves;
+    const std::vector<std::pair<int, int>> directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    for (int r = 0; r < NUM_ROWS; r++)
+    {
+        for (int c = 0; c < NUM_COLS; c++)
+        {
+            Piece p = squares[r][c];
+            if ((sideToMove == WHITE && p == WR) || (sideToMove == BLACK && p == BR))
+            {
+                for (auto [dr, dc] : directions)
+                {
+                    int newRow = r + dr;
+                    int newCol = c + dc;
+                    while (inBounds(newRow, newCol))
+                    {
+                        Piece target = squares[newRow][newCol];
+                        if (target == EMPTY) {
+                            moves.emplace_back(squareIndex(r, c), squareIndex(newRow, newCol));
+                        } else {
+                            if ((sideToMove == WHITE && isBlack(target)) || (sideToMove == BLACK && isWhite(target))) {
                                 moves.emplace_back(squareIndex(r, c), squareIndex(newRow, newCol));
                             }
                             break;
