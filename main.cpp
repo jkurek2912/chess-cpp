@@ -5,12 +5,12 @@ int main() {
     Board board;
     board.print();
 
-    auto pawnMoves = board.generatePawnMoves();
-    std::cout << "Pawn moves count: " << pawnMoves.size() << "\n";
+    auto moves = board.generateKnightMoves();
+    std::cout << "(Piece) moves count: " << moves.size() << "\n";
 
-    if (!pawnMoves.empty()) {
-        std::cout << "Applying first pawn move...\n";
-        board.applyMove(pawnMoves[0]);
+    if (!moves.empty()) {
+        std::cout << "Applying first move...\n";
+        board.applyMove(moves[0]);
         board.print();
     }
 

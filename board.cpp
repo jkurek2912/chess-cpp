@@ -79,15 +79,14 @@ std::vector<Move> Board::generatePawnMoves()
         for (int c = 0; c < NUM_COLS; c++)
         {
             Piece p = squares[r][c];
-            std::cout << (int)p << " ";
 
             if ((sideToMove == WHITE && p == WP) || (sideToMove == BLACK && p == BP))
             {
-                int nextRow = r + direction;
+                int newRow = r + direction;
 
-                if (nextRow >= 0 && nextRow < NUM_ROWS && squares[nextRow][c] == EMPTY)
+                if (newRow >= 0 && newRow < NUM_ROWS && squares[newRow][c] == EMPTY)
                 {
-                    moves.emplace_back(squareIndex(r, c), squareIndex(nextRow, c));
+                    moves.emplace_back(squareIndex(r, c), squareIndex(newRow, c));
 
                     // two steps (only on starting rank)
                     bool isStartRank = (sideToMove == WHITE && r == 6) || (sideToMove == BLACK && r == 1);
@@ -102,17 +101,88 @@ std::vector<Move> Board::generatePawnMoves()
                 for (int dc : {-1, 1})
                 {
                     int captureCol = c + dc;
-                    if (captureCol >= 0 && captureCol < NUM_COLS && nextRow >= 0 && nextRow < NUM_ROWS)
+                    if (captureCol >= 0 && captureCol < NUM_COLS && newRow >= 0 && newRow < NUM_ROWS)
                     {
-                        Piece target = squares[nextRow][captureCol];
+                        Piece target = squares[newRow][captureCol];
                         if (target != EMPTY && ((sideToMove == WHITE && isBlack(target)) || (sideToMove == BLACK && isWhite(target))))
                         {
-                            moves.emplace_back(squareIndex(r, c), squareIndex(nextRow, captureCol));
+                            moves.emplace_back(squareIndex(r, c), squareIndex(newRow, captureCol));
                         }
                     }
                 }
 
                 // TODO: add promotion and en passant
+            }
+        }
+    }
+    return moves;
+}
+
+std::vector<Move> Board::generateKnightMoves()
+{
+    std::vector<Move> moves;
+    const std::vector<std::pair<int, int>> knightOffset = {{-2, -1}, {-2, 1}, {-1, -2}, {-1, 2}, {1, -2}, {1, 2}, {2, -1}, {2, 1}};
+
+    for (int r = 0; r < NUM_ROWS; r++)
+    {
+        for (int c = 0; c < NUM_COLS; c++)
+        {
+            Piece p = squares[r][c];
+            if ((sideToMove == WHITE && p == WN) || (sideToMove == BLACK && p == BN))
+            {
+                for (auto [nr, nc] : knightOffset)
+                {
+                    int newRow = r + nr;
+                    int newCol = c + nc;
+                    if (newRow >= 0 && newRow < NUM_ROWS && newCol >= 0 && newCol < NUM_COLS)
+                    {
+                        Piece target = squares[newRow][newCol];
+                        if (target == EMPTY || (sideToMove == WHITE && isBlack(target) || (sideToMove == BLACK && isWhite(target))))
+                        {
+                            moves.emplace_back(squareIndex(r, c), squareIndex(newRow, newCol));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return moves;
+}
+
+std::vector<Move> Board::generateBishopMoves()
+{
+    std::vector<Move> moves;
+    const std::vector<std::pair<int, int>> directions = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+    for (int r = 0; r < NUM_ROWS; r++)
+    {
+        for (int c = 0; c < NUM_COLS; c++)
+        {
+            Piece p = squares[r][c];
+            if ((sideToMove == WHITE && p == WB) || (sideToMove == BLACK && p == BB))
+            {
+                for (auto [dr, dc] : directions)
+                {
+                    int newRow = r + dr;
+                    int newCol = c + dc;
+                    while (newRow >= 0 && newRow < NUM_ROWS && newCol >= 0 && newCol < NUM_COLS)
+                    {
+                        Piece target = squares[newRow][newCol];
+                        if (target == EMPTY)
+                        {
+                            moves.emplace_back(squareIndex(r, c), squareIndex(newRow, newCol));
+                        }
+                        else
+                        {
+                            if ((sideToMove == WHITE && isBlack(target)) || (sideToMove == BLACK && isWhite(target)))
+                            {
+                                moves.emplace_back(squareIndex(r, c), squareIndex(newRow, newCol));
+                            }
+                            break;
+                        }
+                        newRow += dr;
+                        newCol += dc;
+                    }
+                }
             }
         }
     }
