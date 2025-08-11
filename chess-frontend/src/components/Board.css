@@ -1,38 +1,48 @@
+/* Board.css */
+.board-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
 .board {
-  display: grid;
-  grid-template-columns: repeat(8, 60px);
-  grid-template-rows: repeat(8, 60px);
-  border: 2px solid black;
-  width: 480px;
-  height: 480px;
-  user-select: none;
+    display: grid;
+    grid-template-columns: repeat(8, 60px);
+    grid-template-rows: repeat(8, 60px);
+    border: 2px solid #333;
 }
 
 .square {
-  width: 60px;
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 40px;
-  cursor: pointer;
-}
-
-.light {
-  background-color: #eeeed2;
+    position: relative; /* Needed for absolute positioning of pieces */
 }
 
 .dark {
-  background-color: #769656;
+    background-color: #769656;
+}
+
+.light {
+    background-color: #eeeed2;
+}
+
+.piece-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .piece {
-  pointer-events: none;
+    font-size: 40px;
+    cursor: grab;
+    user-select: none;
 }
 
-.app-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+.piece:active {
+    cursor: grabbing;
+}
+
+.piece[draggable="true"]:hover {
+    opacity: 0.8;
 }
